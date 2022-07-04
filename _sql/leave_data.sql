@@ -1,0 +1,18 @@
+insert into `leaves` (`leave_code`, `leave_name`, `qty_max`, `notes`, `created_at`, `updated_at`, `leave_category`, `is_minus_annual`, `is_holiday_count`) values
+('LVANL','Cuti Tahunan','0','','2019-08-23 14:19:05','2019-08-23 14:19:05','izin','0','0')
+,('LVSH','Ijin Setengah Hari','0','','2019-08-23 14:19:05','2019-08-23 14:19:05','izin','0','0')
+,('LVUL','Ijin Tidak Masuk Kerja','0','','2019-08-23 14:19:44','2019-12-31 11:59:27','izin','1','0')
+,('LVMR','Karyawan Menikah','3','','2019-08-25 20:44:07','2019-12-31 12:56:19','cuti','0','0')
+,('LVAL','Alpa','0','','2019-08-28 11:00:15','2019-10-04 15:11:39','izin','1','0')
+,('LVBP','Membaptiskan Anak','2','','2019-08-28 11:03:29','2019-12-31 12:58:33','cuti','0','0')
+,('LVKH','Mengkhitankan Anak','2','','2019-10-04 15:10:45','2019-12-31 13:04:25','cuti','0','0')
+,('LVSTD','Sakit Tanpa Surat Dokter','0','','2019-12-31 12:58:57','2019-12-31 12:58:57','izin','1','0')
+,('LVAMM','Anak/Menantu Meninggal Dunia','2','','2019-12-31 13:00:34','2020-01-09 09:11:37','cuti','0','0')
+,('LVRM','Anggota dalam Satu Rumah Meninggal','1','','2019-12-31 13:01:07','2019-12-31 13:01:07','cuti','0','0')
+,('LVOTM','Orang Tua/Mertua Meninggal Dunia','2','','2019-12-31 13:01:27','2019-12-31 13:01:43','cuti','0','0')
+,('LVIK','Istri Keguguran','2','','2019-12-31 13:02:24','2019-12-31 13:02:24','cuti','0','0')
+,('LVIMH','Istri Melahirkan','2','','2019-12-31 13:03:10','2019-12-31 13:03:10','cuti','0','0')
+,('LVSIM','Suami/Istri Meninggal Dunia','2','','2019-12-31 13:03:22','2019-12-31 13:03:22','cuti','0','0')
+,('LVKMH','Karyawan Melahirkan','90','','2019-12-31 13:03:42','2019-12-31 13:03:42','cuti','0','0')
+,('LVKK','Karyawan Keguguran','14','Durasi waktu sesuai surat rekomendasi dokter kandungan','2019-12-31 13:04:07','2020-01-10 14:47:04','cuti','0','0')
+,('LVAM','Menikahkan Anak','2','','2019-12-31 13:08:27','2019-12-31 13:08:27','cuti','0','0');
