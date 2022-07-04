@@ -26,6 +26,7 @@
 	<link rel="stylesheet" href="{{ asset('css/app.css') }}">
 	@stack('css')
 	<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+	<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
 	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap4.min.css">
 </head>
 <body>
@@ -49,6 +50,7 @@
 	@yield('modals')
 	<script src="{{ asset('js/app.js') }}"></script>
 	<script src="{{ asset('js/custom.js') }}"></script>
+	<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
 	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
 	<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
 	@stack('scripts')

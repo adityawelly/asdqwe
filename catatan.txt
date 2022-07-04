@@ -1,0 +1,5 @@
+yang diubah pada modul Pelamar (Applier)
+1. Web Routes
+2. ApplyController : index, remove
+3. Ajax pada applier.index.blade.php
+4. Tambah Libarary Toastr

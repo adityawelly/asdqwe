@@ -31,7 +31,7 @@
                             <div class="form-group">
                                 <label for="" class="label col-md-3">Filter Status Pelamar</label>
                                 <div class="col-md-3">
-                                    <select name="status_data" class="form-control selectpicker" onchange="this.form.submit()">
+                                    <select name="status_data" id="status-data" class="form-control selectpicker">
                                         <option></option>
                                         @foreach ($sp as $sp)
                                             <option value="{{ $sp->kode }}" {{ request()->status_data == $sp->kode ?'selected':'' }}>{{ $sp->nama }}</option>
@@ -40,7 +40,7 @@
                                 </div>
 								<label for="" class="label col-md-3">Posisi Yang Dilamar</label>
                                 <div class="col-md-3">
-                                    <select name="id_job" class="form-control selectpicker" onchange="this.form.submit()">
+                                    <select name="id_job" id="id-job" class="form-control selectpicker">
                                         <option></option>
 										@foreach ($sr as $sr)
                                             <option value="{{ $sr->id }}" {{ request()->id_job == $sr->id ?'selected':'' }}>{{ $sr->job_title_name . ' (' . $sr->region_city .')' }}</option>
@@ -112,8 +112,10 @@
 
 @section('script')
 <script>
+    var url = "/apply";
+
     var dt = $('#dttable').dataTable({
-		"order": [[ 0, "desc" ]],
+		"order": [[ 7, "desc" ]],
 		"columnDefs": [
             {
                 "targets": [ 0 ],
@@ -122,7 +124,7 @@
         ],
         responsive: true,
         serverSide: true,
-        ajax: "/apply",
+        ajax: url,
         columns: [
             {data: "insert_date", name: "insert_date", class: "content"},
             {data: "status_data", name: "status_data", class: "content"},
@@ -135,10 +137,90 @@
             {data: "read_date", name: "read_date", class: "content"},
         ]
     }).api();
+
+    function dtableReload(){
+        dt.ajax.reload(function(){console.log('reload url')}, false); //Reload isi datatables
+    }
+
+    //ini untuk filter
+    //BEGIN::Filter
+    $(document).on("change", "#id-job, #status-data", function(){ //Setiap ada perubahan pada #id-job dan atau #status-data
+        url = "/apply?status_data=" + $("#status-data").val() + "&id_job=" + $("#id-job").val(); //Ambil Value
+
+        dt.ajax.url( url ).load(); //Reload URL pada Datatables dengan variabel dt
+        dtableReload();
+    });
+    //END::Filter
+
+    var id;
+    //BEGIN::Hapus record
+    $(document).on("click", ".delete", function(e){
+        e.preventDefault();
+        id = $(this).attr('id');
+
+        $("#hapus-modal").modal("show");
+    });
+
+    $('#hapus-form').on('submit', function(e){
+        e.preventDefault();
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: "/apply/remove/" + id,
+            cache: false,
+            method: "DELETE",
+            dataType: "json",
+            success:function(data)
+            {
+                if(data.success){
+                    toastr.options = {
+                        "positionClass": "toast-top-center",
+                    };
+                    toastr.success(data.success);
+                }
+            },
+            error:function(data){
+                console.log(data);
+            },
+            complete:function(data){
+                if(JSON.parse(data.responseText).success){
+                    $('#hapus-modal').modal('hide');
+                    dtableReload();
+                }
+            }
+        });
+    })
+    //END::Hapus record
 </script>
 @endsection
 
 @section('modals')
+<div class="modal fade" id="hapus-modal" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="hapus-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Hapus</h5>
+            </div>
+            <form id="hapus-form">
+                <div class="modal-body">
+                    <p>
+                        Tekan tombol <span class="text-danger">Hapus</span>, jika anda yakin untuk menghapus data.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light font-weight-bold" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger font-weight-bold">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
