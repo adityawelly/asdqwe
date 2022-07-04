@@ -441,7 +441,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/detail/{id}', 'ApplyController@detail')->name('apply.detail');
             Route::get('/cetak/{id}', 'ApplyController@cetak')->name('apply.create')->middleware('permission:submission-apply');
             Route::post('/export', 'ApplyController@export')->name('apply.export')->middleware('permission:modify-apply');
-            Route::post('/remove', 'ApplyController@remove')->name('apply.remove')->middleware('permission:modify-apply');
+            //tambah id di remove / hapus
+            Route::delete('/remove/{id}', 'ApplyController@remove')->name('apply.remove')->middleware('permission:modify-apply');
+            //end tambah id di remove / hapus
 			Route::post('/karyawan', 'ApplyController@karyawan')->name('apply.karyawan')->middleware('permission:modify-apply');
 			Route::post('/{apply}/approve', 'ApplyController@approve')->name('apply.approve')->middleware('permission:modify-apply');
     });

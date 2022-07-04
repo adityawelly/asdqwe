@@ -22,6 +22,8 @@ use Spatie\Permission\Models\Role;
 use DataTables;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Validator;
+
 class ApplyController extends Controller
 {
     public function cetak($id)
@@ -43,17 +45,19 @@ class ApplyController extends Controller
                       FROM applier AS a, jobs AS b, job_titles AS c, company_regions AS d
                       WHERE a.id_job = b.id AND b.job_id = c.id AND b.region_id = d.id";
 
-            // if ($request->has('status_data')) {
-            //     if ($request->status_data != 'AL' && $request->status_data != '') {
-            //         $query .= " AND a.status_data = '{$request->status_data}'";
-            //     }
-            // }
+            //Cek variabel status_data pada url yang dikirim
+            if ($request->status_data) {
+                if ($request->status_data != 'AL' && $request->status_data != '') {
+                    $query .= " AND a.status_data = '{$request->status_data}'";
+                }
+            }
 
-            // if ($request->has('id_job')) {
-            //     if ($request->id_job != '') {
-            //         $query .= " AND a.id_job = '{$request->id_job}'";
-            //     }
-            // }
+            //Cek variabel id_job pada url yang dikirim
+            if ($request->id_job) {
+                if ($request->id_job != '') {
+                    $query .= " AND a.id_job = '{$request->id_job}'";
+                }
+            }
 
             $query .= " ORDER by a.insert_date DESC limit 1500";
 
@@ -79,12 +83,7 @@ class ApplyController extends Controller
                 $html = '';
                 $html .= '<div class="btn-group-vertical">
                         <a href="/apply/detail/'.$data->id.'" class="btn btn-sm btn-primary"><i class="fa fa-search"></i> Detail</a>
-
-                        <form action="/apply/remove" method="post" onsubmit="return confirm("Apa anda yakin ? Hal ini tidak dapat dikembalikan.");">
-                            <input type="hidden" name="id" value="'.$data->id.'" required>
-                            <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i> Hapus</button>
-                        </form>
-
+                        <a href="javascript:void(0)" id="' . $data->id . '" class="delete btn btn-sm btn-danger"><i class="fa fa-trash"></i> Hapus</a>
                         </div>';
                         return $html;
             })
@@ -94,43 +93,16 @@ class ApplyController extends Controller
 
         $employee_id = auth()->user()->employee->id;
 
-        // $query = "SELECT a.*, b.job_id, c.job_title_name, d.region_city
-        //           FROM applier AS a, jobs AS b, job_titles AS c, company_regions AS d
-        //           WHERE a.id_job = b.id AND b.job_id = c.id AND b.region_id = d.id";
-
-
-        // if ($request->has('status_data')) {
-        //     if ($request->status_data != 'AL' && $request->status_data != '') {
-        //         $query .= " AND a.status_data = '{$request->status_data}'";
-        //     }
-        // }
-
-        // if ($request->has('id_job')) {
-        //     if ($request->id_job != '') {
-        //         $query .= " AND a.id_job = '{$request->id_job}'";
-        //     }
-        // }
-
-        // $query .= " ORDER by a.insert_date DESC limit 1500";
-
-        // $pengajuans = DB::select($query);
-
         $sp = DB::table('status_pelamar')->orderBy('nama', 'asc')->get();
         $sr = DB::table('vw_jobin')->get();
         $job = DB::table('v_job')->get();
 
         return view('apply.index', [
             'employee_id' => $employee_id,
-            // 'pengajuans' => $pengajuans,
 			'job' => $job,
 			'sp' => $sp,
 			'sr' => $sr
         ]);
-
-        // return DataTables::of($data)->make(true);
-        // $data = Applier::first();
-        // return $data->status_data;
-        // return $data;
     }
 /*
 	public function karyawan(Request $request)
@@ -356,29 +328,19 @@ class ApplyController extends Controller
     }
 
 
-    public function remove(Request $request)
+    public function remove($id)
     {
-        $request->validate([
-            'id' => 'required|numeric'
-        ]);
+        if(request()->ajax()){
+            $input['id'] = $id;
+            Validator::make($input, [
+                'id' => 'required|numeric|exists:applier,id'
+            ])->validate();
 
-        $id = $request->id;
+            DB::transaction(function() use ($id){
+                DB::table('applier')->where('id', $id)->delete();
+            });
 
-        DB::beginTransaction();
-        try {
-            DB::table('applier')->where('id', $id)->delete();
-
-            DB::commit();
-            return redirect()->back()->with('alert', [
-                'type' => 'success',
-                'msg' => 'Berhasil Hapus Pelamar',
-            ]);
-        } catch (Exception $ex) {
-            DB::rollBack();
-            return redirect()->back()->with('alert', [
-                'type' => 'danger',
-                'msg' => $ex->getMessage()
-            ]);
+            return response()->json(['success' => 'Berhasil hapus pelamar.']);
         }
     }
 }
